@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=https://json.schemastore.org/bukkit-plugin.json
+name: TestPlugin
+version: 1.0.0
+main: net.colourlabs.testplugin.DummyPlugin
+api-version: 1.12
+
+commands:
+  test:
+    description: Test command that demonstrates various bugs
+    usage: /test <add|divide|greet|count>

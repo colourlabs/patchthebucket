@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=https://json.schemastore.org/bukkit-plugin.json
+name: PatchTheBucketDemo
+version: 1.0.0
+main: net.colourlabs.patchthebucket.demo.DemoPlugin
+depend: [PatchTheBucket]
+api-version: 1.12

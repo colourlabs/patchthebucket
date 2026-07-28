@@ -1,0 +1,15 @@
+[versions]
+asm = "9.7"
+spigot = "1.12.2-R0.1-SNAPSHOT"
+shadow = "8.1.1"
+byteBuddyAgent = "1.15.10"
+
+[libraries]
+asm-core = { module = "org.ow2.asm:asm", version.ref = "asm" }
+asm-tree = { module = "org.ow2.asm:asm-tree", version.ref = "asm" }
+asm-commons = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
+spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }
+byte-buddy-agent = { module = "net.bytebuddy:byte-buddy-agent", version.ref = "byteBuddyAgent" }
+
+[plugins]
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
