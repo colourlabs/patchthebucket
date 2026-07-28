@@ -31,13 +31,24 @@ If you get a warning about dynamic agent loading on Java 21+, add to your JVM fl
 
 ## for patch authors
 
-You need at compile time:
+Add JitPack to your `build.gradle.kts`:
 
-- `patchthebucket-api-1.0.0.jar` - annotations and interfaces
-- `asm-tree-9.7.jar` - `MethodNode` and friends
-- Spigot API jar (from BuildTools [see setting up BuildTools](#setting-up-buildtools)) - `JavaPlugin`, `getServer()`, etc.
+```kotlin
+repositories {
+    maven("https://jitpack.io")
+    mavenLocal() // spigot api from BuildTools
+}
 
-ASM and the API are `compileOnly`, at runtime they come from the PatchTheBucket classloader. The Spigot API is `compileOnly` too, provided by the server.
+dependencies {
+    compileOnly("com.github.colourlabs.patchthebucket:patchthebucket-api:VERSION")
+    compileOnly("org.ow2.asm:asm-tree:9.7")
+    compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
+}
+```
+
+ASM and the API are `compileOnly` - at runtime they come from PatchTheBucket's classloader. The Spigot API is `compileOnly` too, provided by the server.
+
+Replace `VERSION` with a tag (e.g. `1.0.0`) or `main-SNAPSHOT` for latest commit.
 
 # usage
 

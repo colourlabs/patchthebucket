@@ -1,6 +1,7 @@
 plugins {
     id("java")
     alias(libs.plugins.shadow)
+    `maven-publish`
     eclipse
 }
 
@@ -109,4 +110,15 @@ tasks.shadowJar {
 
 tasks.build {
     dependsOn(tasks.shadowJar, apiJar, testPluginJar, demoJar)
+}
+
+publishing {
+    publications {
+        register("api", MavenPublication::class) {
+            groupId = project.group.toString()
+            artifactId = "patchthebucket-api"
+            version = project.version.toString()
+            artifact(apiJar)
+        }
+    }
 }
