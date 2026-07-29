@@ -28,7 +28,8 @@ public final class AnnotationProcessor {
         }
 
         String targetClass = targetAnnotation.value();
-        ClassPatchBuilder builder = ClassPatchBuilder.forClass(targetClass);
+        ClassPatchBuilder builder = ClassPatchBuilder.forClass(targetClass)
+                .computeFrames(targetAnnotation.computeFrames());
 
         for (java.lang.reflect.Method method : patchClass.getDeclaredMethods()) {
             TransformMethod transform = method.getAnnotation(TransformMethod.class);

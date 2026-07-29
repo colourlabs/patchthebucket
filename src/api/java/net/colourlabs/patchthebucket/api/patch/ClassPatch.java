@@ -5,5 +5,7 @@ import org.objectweb.asm.tree.ClassNode;
 public interface ClassPatch {
     String targetClassName();
 
+    boolean computeFrames();
+
     void apply(ClassNode classNode);
 }

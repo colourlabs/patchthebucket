@@ -19,4 +19,16 @@ public @interface TargetClass {
      */
     String value();
 
+    /**
+     * Whether to compute stack-map frames. Disable when the target class
+     * references plugin-internal types invisible to the agent classloader,
+     * which would otherwise throw TypeNotPresentException during frame
+     * computation.
+     * <p>
+     * When true, ASM's COMPUTE_FRAMES is used with a fallback to
+     * {@code java/lang/Object} for unresolvable types. When false,
+     * COMPUTE_MAXS is used instead (avoids frame computation entirely).
+     */
+    boolean computeFrames() default true;
+
 }

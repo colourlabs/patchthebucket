@@ -51,6 +51,11 @@ public final class InjectorBuilder {
             }
 
             @Override
+            public boolean computeFrames() {
+                return true;
+            }
+
+            @Override
             public void apply(ClassNode classNode) {
                 for (MethodNode method : classNode.methods) {
                     for (Injection injection : frozen) {

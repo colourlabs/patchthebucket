@@ -76,7 +76,10 @@ public class PatchRegistryService implements PatchRegistry {
             instrumentation.retransformClasses(target);
             logger.info("Retransformed already-loaded class: " + dottedName);
         } catch (UnmodifiableClassException e) {
-            logger.severe("Retransform failed for " + dottedName + ": " + e.getMessage());
+            logger.warning("Retransform failed for " + dottedName + ": " + e.getMessage());
+        } catch (Throwable e) {
+            logger.log(Level.WARNING, "Patch rejected by JVM for " + dottedName
+                    + ", class left unchanged", e);
         }
     }
 

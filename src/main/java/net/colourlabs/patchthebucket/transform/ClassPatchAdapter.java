@@ -21,14 +21,32 @@ public class ClassPatchAdapter implements Patch {
 
     @Override
     public byte[] apply(byte[] originalBytes) {
+        int readerFlags = classPatch.computeFrames() ? ClassReader.SKIP_FRAMES : 0;
         ClassReader reader = new ClassReader(originalBytes);
         ClassNode classNode = new ClassNode();
-        reader.accept(classNode, ClassReader.SKIP_FRAMES);
+        reader.accept(classNode, readerFlags);
 
         classPatch.apply(classNode);
 
-        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-        classNode.accept(writer);
-        return writer.toByteArray();
+        int writerFlags = classPatch.computeFrames()
+                ? ClassWriter.COMPUTE_FRAMES
+                : ClassWriter.COMPUTE_MAXS;
+
+        try {
+            ClassWriter writer = new ClassWriter(writerFlags) {
+                @Override
+                protected String getCommonSuperClass(String type1, String type2) {
+                    try {
+                        return super.getCommonSuperClass(type1, type2);
+                    } catch (TypeNotPresentException e) {
+                        return "java/lang/Object";
+                    }
+                }
+            };
+            classNode.accept(writer);
+            return writer.toByteArray();
+        } catch (TypeNotPresentException e) {
+            return originalBytes;
+        }
     }
 }
