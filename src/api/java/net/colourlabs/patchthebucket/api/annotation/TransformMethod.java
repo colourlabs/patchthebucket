@@ -23,11 +23,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface TransformMethod {
-
     /** Method name to transform. */
     String value();
 
     /** Optional method descriptor to narrow the match. */
     String descriptor() default "";
-
 }

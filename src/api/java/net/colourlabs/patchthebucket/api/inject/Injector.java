@@ -10,7 +10,6 @@ import org.objectweb.asm.tree.MethodNode;
  */
 @FunctionalInterface
 public interface Injector {
-
     /**
      * Produce the instructions to insert at the matched point.
      *
@@ -18,5 +17,4 @@ public interface Injector {
      * @return the instruction list to splice in
      */
     org.objectweb.asm.tree.InsnList instructions(MethodNode methodNode);
-
 }

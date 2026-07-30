@@ -4,18 +4,19 @@ import net.colourlabs.patchthebucket.agent.PatchAgent;
 import net.colourlabs.patchthebucket.api.PatchTheBucketAPI;
 import net.colourlabs.patchthebucket.service.PatchRegistryService;
 import net.colourlabs.patchthebucket.service.PatchTheBucketService;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class PatchTheBucket extends JavaPlugin {
-
     private PatchRegistryService registry;
 
     @Override
     public void onEnable() {
         checkJavaVersion();
         checkMinecraftVersion();
+
         try {
             PatchAgent.obtain();
             registry = new PatchRegistryService(PatchAgent.obtain(), getLogger());
@@ -40,7 +41,7 @@ public class PatchTheBucket extends JavaPlugin {
     }
 
     private void checkMinecraftVersion() {
-        String raw = Bukkit.getBukkitVersion(); // e.g. "1.12.2-R0.1-SNAPSHOT"
+        String raw = Bukkit.getBukkitVersion();
         
         getLogger().info("Running on " + Bukkit.getName() + " " + Bukkit.getVersion());
         getLogger().info("Bukkit API version: " + raw);

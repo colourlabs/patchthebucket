@@ -8,11 +8,11 @@ import net.colourlabs.patchthebucket.api.patch.ClassPatchBuilder;
 import net.colourlabs.patchthebucket.api.patch.MethodSelector;
 import net.colourlabs.patchthebucket.api.patch.MethodTransform;
 import net.colourlabs.patchthebucket.api.registry.PatchRegistry;
+
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.MethodNode;
 
 import java.util.HashMap;
 import java.util.Map;

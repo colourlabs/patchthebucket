@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "net.colourlabs.patchthebucket"
-version = "1.0.0"
+version = "1.2.0"
 
 repositories {
     mavenCentral()
@@ -17,10 +17,12 @@ sourceSets {
     create("api") {
         java { setSrcDirs(listOf("src/api/java")) }
     }
+    
     create("testPlugin") {
         java { setSrcDirs(listOf("src/testPlugin/java")) }
         resources { setSrcDirs(listOf("src/testPlugin/resources")) }
     }
+
     create("demo") {
         java { setSrcDirs(listOf("src/demo/java")) }
         resources { setSrcDirs(listOf("src/demo/resources")) }
@@ -96,9 +98,6 @@ tasks.shadowJar {
     archiveFileName.set("${project.name}-${project.version}.jar")
     from(sourceSets["api"].output)
     dependsOn(sourceSets["api"].classesTaskName)
-    
-    // ASM is NOT relocated, must be at org.objectweb.asm.* so consumer plugins
-    // can use the same ASM types at runtime (loaded via dependency classloader).
 
     manifest {
         attributes(

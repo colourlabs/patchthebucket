@@ -2,6 +2,7 @@ package net.colourlabs.patchthebucket.api.inject;
 
 import net.colourlabs.patchthebucket.api.patch.ClassPatch;
 import net.colourlabs.patchthebucket.api.patch.MethodSelector;
+
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodNode;

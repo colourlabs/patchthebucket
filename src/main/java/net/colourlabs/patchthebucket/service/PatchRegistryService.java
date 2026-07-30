@@ -9,14 +9,15 @@ import net.colourlabs.patchthebucket.transform.PatchTransformer;
 
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PatchRegistryService implements PatchRegistry {
-
     private final Instrumentation instrumentation;
     private final PatchTransformer transformer;
     private final Logger logger;
+    private final ConcurrentHashMap<String, Class<?>> loadedClassCache = new ConcurrentHashMap<>();
 
     public PatchRegistryService(Instrumentation instrumentation, Logger logger) {
         this.instrumentation = instrumentation;
@@ -84,8 +85,13 @@ public class PatchRegistryService implements PatchRegistry {
     }
 
     private Class<?> findLoadedClass(String dottedName) {
+        Class<?> cached = loadedClassCache.get(dottedName);
+        if (cached != null) {
+            return cached;
+        }
         for (Class<?> c : instrumentation.getAllLoadedClasses()) {
             if (c.getName().equals(dottedName)) {
+                loadedClassCache.put(dottedName, c);
                 return c;
             }
         }
