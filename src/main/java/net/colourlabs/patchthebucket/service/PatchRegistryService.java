@@ -14,15 +14,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PatchRegistryService implements PatchRegistry {
+    private static final Object UNLOADED = new Object();
+
     private final Instrumentation instrumentation;
     private final PatchTransformer transformer;
     private final Logger logger;
-    private final ConcurrentHashMap<String, Class<?>> loadedClassCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Object> loadedClassCache = new ConcurrentHashMap<>();
 
     public PatchRegistryService(Instrumentation instrumentation, Logger logger) {
         this.instrumentation = instrumentation;
         this.logger = logger;
-        this.transformer = new PatchTransformer(logger);
+        this.transformer = new PatchTransformer(logger, this::onClassLoaded);
         instrumentation.addTransformer(transformer, true);
     }
 
@@ -85,9 +87,12 @@ public class PatchRegistryService implements PatchRegistry {
     }
 
     private Class<?> findLoadedClass(String dottedName) {
-        Class<?> cached = loadedClassCache.get(dottedName);
-        if (cached != null) {
-            return cached;
+        Object cached = loadedClassCache.get(dottedName);
+        if (cached instanceof Class) {
+            return (Class<?>) cached;
+        }
+        if (cached == UNLOADED) {
+            return null;
         }
         for (Class<?> c : instrumentation.getAllLoadedClasses()) {
             if (c.getName().equals(dottedName)) {
@@ -95,6 +100,13 @@ public class PatchRegistryService implements PatchRegistry {
                 return c;
             }
         }
+        loadedClassCache.put(dottedName, UNLOADED);
         return null;
+    }
+
+    private void onClassLoaded(String dottedName) {
+        if (loadedClassCache.get(dottedName) == UNLOADED) {
+            loadedClassCache.remove(dottedName);
+        }
     }
 }

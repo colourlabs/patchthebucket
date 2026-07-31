@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://json.schemastore.org/bukkit-plugin.json
 name: TestPlugin
-version: 1.0.0
+version: ${version}
 main: net.colourlabs.testplugin.DummyPlugin
 api-version: 1.12
 

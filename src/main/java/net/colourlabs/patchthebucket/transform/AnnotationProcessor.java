@@ -62,7 +62,9 @@ public final class AnnotationProcessor {
                                 createReturnInject(method));
                         break;
                     default:
-                        break;
+                        throw new IllegalArgumentException(
+                                "Unsupported @At value \"" + at.value()
+                                        + "\" on " + method.getName());
                 }
             }
         }
@@ -118,6 +120,9 @@ public final class AnnotationProcessor {
                     int opcode = insn.getOpcode();
                     if (opcode == Opcodes.RETURN
                             || opcode == Opcodes.IRETURN
+                            || opcode == Opcodes.LRETURN
+                            || opcode == Opcodes.FRETURN
+                            || opcode == Opcodes.DRETURN
                             || opcode == Opcodes.ARETURN) {
                         methodNode.instructions.insertBefore(insn, cloneInsnList(insns));
                     }

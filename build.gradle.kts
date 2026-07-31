@@ -1,3 +1,5 @@
+import org.gradle.language.jvm.tasks.ProcessResources
+
 plugins {
     id("java")
     alias(libs.plugins.shadow)
@@ -6,7 +8,7 @@ plugins {
 }
 
 group = "net.colourlabs.patchthebucket"
-version = "1.2.0"
+version = "1.3.0"
 
 repositories {
     mavenCentral()
@@ -34,6 +36,11 @@ sourceSets.named("main") {
     runtimeClasspath += sourceSets["api"].output
 }
 
+sourceSets.named("test") {
+    compileClasspath += sourceSets["api"].output
+    runtimeClasspath += sourceSets["api"].output
+}
+
 sourceSets.named("demo") {
     compileClasspath += sourceSets["api"].output
 }
@@ -50,6 +57,8 @@ dependencies {
     "testPluginCompileOnly"(libs.spigot.api)
     "demoCompileOnly"(libs.spigot.api)
     "demoCompileOnly"(libs.asm.tree)
+
+    testImplementation(libs.junit.jupiter)
 }
 
 java {
@@ -76,6 +85,24 @@ tasks.jar {
     }
 }
 
+tasks.named<ProcessResources>("processResources") {
+    filesMatching("plugin.yml") {
+        filter { line -> line.replace("\${version}", project.version.toString()) }
+    }
+}
+
+tasks.named<ProcessResources>("processTestPluginResources") {
+    filesMatching("plugin.yml") {
+        filter { line -> line.replace("\${version}", project.version.toString()) }
+    }
+}
+
+tasks.named<ProcessResources>("processDemoResources") {
+    filesMatching("plugin.yml") {
+        filter { line -> line.replace("\${version}", project.version.toString()) }
+    }
+}
+
 val apiJar by tasks.registering(Jar::class) {
     archiveFileName.set("patchthebucket-api-${project.version}.jar")
     from(sourceSets["api"].output)
@@ -99,6 +126,8 @@ tasks.shadowJar {
     from(sourceSets["api"].output)
     dependsOn(sourceSets["api"].classesTaskName)
 
+    relocate("net.bytebuddy", "net.colourlabs.patchthebucket.shaded.net.bytebuddy")
+
     manifest {
         attributes(
             "Can-Retransform-Classes" to "true",
@@ -111,6 +140,15 @@ tasks.build {
     dependsOn(tasks.shadowJar, apiJar, testPluginJar, demoJar)
 }
 
+tasks.test {
+    useJUnitPlatform()
+}
+
+val apiSourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(sourceSets["api"].java)
+}
+
 publishing {
     publications {
         register("api", MavenPublication::class) {
@@ -118,6 +156,17 @@ publishing {
             artifactId = "patchthebucket-api"
             version = project.version.toString()
             artifact(apiJar)
+            artifact(apiSourcesJar)
+
+            pom {
+                withXml {
+                    val dependency = asNode().appendNode("dependencies").appendNode("dependency")
+                    dependency.appendNode("groupId", "org.ow2.asm")
+                    dependency.appendNode("artifactId", "asm-tree")
+                    dependency.appendNode("version", libs.versions.asm.get())
+                    dependency.appendNode("scope", "provided")
+                }
+            }
         }
     }
 }

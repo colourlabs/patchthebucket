@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://json.schemastore.org/bukkit-plugin.json
 name: PatchTheBucket
-version: 1.0.0
+version: ${version}
 main: net.colourlabs.patchthebucket.PatchTheBucket
 load: STARTUP
 loadbefore: [TestPlugin]

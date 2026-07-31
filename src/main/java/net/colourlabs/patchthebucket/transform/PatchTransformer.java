@@ -8,15 +8,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PatchTransformer implements ClassFileTransformer {
     private final Logger logger;
+    private final Consumer<String> onClassLoaded;
     private final Map<String, List<Patch>> patchesByClass = new ConcurrentHashMap<>();
 
-    public PatchTransformer(Logger logger) {
+    public PatchTransformer(Logger logger, Consumer<String> onClassLoaded) {
         this.logger = logger;
+        this.onClassLoaded = onClassLoaded;
     }
 
     public void register(Patch patch) {
@@ -37,6 +40,8 @@ public class PatchTransformer implements ClassFileTransformer {
         if (patches == null || patches.isEmpty()) {
             return null;
         }
+
+        onClassLoaded.accept(dotted);
 
         byte[] current = classfileBuffer;
         for (Patch patch : patches) {

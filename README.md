@@ -21,7 +21,7 @@ Patches use ASM tree API (`MethodNode`, `InsnList`, etc) directly, No abstractio
 
 ## server
 
-Drop `patchthebucket-1.0.0.jar` in `plugins/`. No config required
+Drop `patchthebucket-<version>.jar` in `plugins/`. No config required
 
 If you get a warning about dynamic agent loading on Java 21+, add to your JVM flags:
 
@@ -41,12 +41,11 @@ repositories {
 
 dependencies {
     compileOnly("com.github.colourlabs.patchthebucket:patchthebucket-api:VERSION")
-    compileOnly("org.ow2.asm:asm-tree:9.7")
     compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
 }
 ```
 
-ASM and the API are `compileOnly` - at runtime they come from PatchTheBucket's classloader. The Spigot API is `compileOnly` too, provided by the server.
+ASM (`asm-tree`) is pulled in transitively by the API POM; the API and ASM are `compileOnly` - at runtime they come from PatchTheBucket's classloader. The Spigot API is `compileOnly` too, provided by the server.
 
 Replace `VERSION` with a tag (e.g. `1.0.0`) or `main-SNAPSHOT` for latest commit.
 
@@ -57,7 +56,6 @@ Replace `VERSION` with a tag (e.g. `1.0.0`) or `main-SNAPSHOT` for latest commit
 ```java
 @TargetClass("net.example.BrokenPlugin")
 public class MyPatches {
-
     @TransformMethod("brokenMethod")
     public static void fixIt(MethodNode method) {
         method.instructions.clear();
@@ -104,6 +102,7 @@ ClassPatch patch = ClassPatchBuilder.forClass("net.example.BrokenPlugin")
         // ...
     })
     .build();
+
 api.register(patch);
 ```
 
@@ -115,12 +114,12 @@ api.register(patch);
 
 Outputs in `build/libs/`:
 
-| jar                             | purpose                                          |
-| ------------------------------- | ------------------------------------------------ |
-| `patchthebucket-1.0.0.jar`      | framework (shaded, deploy to server)             |
-| `patchthebucket-api-1.0.0.jar`  | API for consumer compile-time dep                |
-| `test-plugin-1.0.0.jar`         | broken dummy plugin for testing                  |
-| `patchthebucket-demo-1.0.0.jar` | example consumer plugin that patches test-plugin |
+| jar                              | purpose                                          |
+| -------------------------------- | ------------------------------------------------ |
+| `patchthebucket-<version>.jar`   | framework (shaded, deploy to server)             |
+| `patchthebucket-api-<version>.jar` | API for consumer compile-time dep              |
+| `test-plugin-<version>.jar`      | broken dummy plugin for testing                  |
+| `patchthebucket-demo-<version>.jar` | example consumer plugin that patches test-plugin |
 
 ## setting up buildtools
 
